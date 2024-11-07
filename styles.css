@@ -1,0 +1,1285 @@
+/*
+  =============================================================
+  Author: Julian Manders-Jones
+  Date: October 2024
+  Project: Binary Search Tree Visualiser
+  Repo: https://github.com/iteacher/bstvisualiser
+
+  Description: an interactive tool designed for learners, educators, and developers interested in deepening their understanding of binary search trees. This app offers a dynamic approach to studying BSTs by enabling users to visually interact with and manipulate the tree structure.
+  
+  © 2024 Julian Manders-Jones. All rights reserved.
+  
+  This file is part of Binary Search Tree Visualiser.
+
+  MIT License
+  You may obtain a copy of the License at [Link to LICENSE file]
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  =============================================================
+*/
+
+
+/* Define CSS Variables in :root */
+/* Theme 1: Midnight Blue */
+:root {
+
+    --top-status-width:35%;
+    --top-spacer-width:5%; 
+    --top-right-group-width:60%;
+
+    /* Dynamic Scaling Variables */
+    --gray-100: #ececec;
+    --gray-200: #e3e3e3;
+    --gray-300: #cdcdcd;
+    --gray-400: #b4b4b4;
+    --gray-500: #9b9b9b;
+    --gray-600: #676767;
+    --gray-700: #424242;
+    --gray-750: #2f2f2f;
+    --gray-800: #212121;
+    --gray-900: #171717;
+    --gray-950: #0d0d0d;
+
+    --color-1:#ff8f00;
+    --color-2:#C66F00;
+    --color-3:var(--gray-700);
+
+
+    /* --color-3:#03a9f4; */
+    --color-4:#00796B;
+    --color-5:#1B7B34;
+    --color-6:#07601E;
+    --color-7:#004312;
+    --color-12:#0270a3;
+    --color-13:#006da1;
+
+
+    --color-8:#6a1B9a;
+
+    --color-9:#C0392B;
+    --color-10:#f45303;
+    --color-11:#d24600;
+
+    /* Button Theme Colors */
+    --button-step-default: #2E7D32;    /* Darker Blue */
+    --button-step-hover: #0D47A1;
+    --button-step-active: #0A3880;
+    
+    --button-redraw-default: #607D8B;  /* Darker Green */
+    --button-redraw-hover: #1B5E20;
+    --button-redraw-active: #154A18;
+    
+    --button-random-default: #607D8B;  /* Darker Purple */
+    --button-random-hover: #4A148C;
+    --button-random-active: #38108C;
+    
+    /* Common button styles */
+    --button-text: #FFFFFF;
+    --button-shadow: rgba(0, 0, 0, 0.1);
+    --button-highlight: rgba(255, 255, 255, 0.1);
+
+    /* 1. Primary Background Colors */
+    --color-primary-bg: var(--gray-800); /* Dark Charcoal */
+    --color-primary-bg-alt: var(--gray-800); /* Dim Gray */
+    --color-top-pane-bg: var(--gray-900); /* Dim Gray */
+    /* 2. Text Colors */
+    --color-text-primary: #D3D3D3; /* Light Gray */
+    --color-text-secondary: #A9A9A9; /* Dark Gray */
+    --color-text-accent: #FF9800; /* Bright Orange */
+    --color-text-black: #000000; /* Black */
+
+    /* 3. Input and Dropdown Backgrounds */
+    --color-input-bg: var(--gray-800); /* Dark Slate Gray */
+
+    /* 4. Numbers in list */
+    --color-numbersList-bg: var(--gray-950); /* Vivid Blue */
+    --color-numberList-item-bg: #03A9F4;
+    --color-numberList-text: var(--gray-200);
+    --color-numbersList-border:var(--gray-700);
+
+    /* 5. Borders and Lines */
+    --color-border: #555555; /* Medium Dark Gray */
+
+    /* 6. Buttons */
+    --button-color: var(--gray-600); 
+    --button-color-hover: var(--gray-700); /* Darker Green */
+    --button-text-color: #ffffff; /* White */
+
+    --color-button-next-hover-bg: #6a1B9a; /* Dark Mustard */
+    --color-button-next-bg: #00796B; /* Mustard */
+    --color-button-next-text: #ffffff; /* White */
+    
+    /* 7. Binary Tree Nodes */
+    /* --color-node-bg: #a76004; Forest Green */
+    --color-node-bg: var(--color-5); /* Forest Green */
+
+    --color-node-text: var(--gray-200); /* White */
+    --color-node-bg-highlighted: #03A9F4; /* Amber */
+    --color-node-text-highlighted:var(--button-text-color);
+ 
+    --color-node-greyed-out: #444444;
+    --color-node-text-greyed-out: #888888;
+    --color-node-focus: #d24600;
+    --color-node-text-focus: var(--button-text-color);
+
+    /* --color-node-bg-highlighted: #EAB126; Amber */
+    --color-node-hover: var(--color-node-focus); /* Red */
+    
+    /* 8. Lines Connecting Nodes */
+    --color-line: var(--gray-400); /* Light Gray */
+    --color-line-node: var(--gray-500); /* Light Gray */
+
+
+    
+    /* 9. Status Message */
+    --color-status-message-bg: var(--gray-950); /* Dim Gray */
+    --color-status-message-border: var(--gray-800); /* Dim Gray */
+    --color-status-border: var(--gray-700); /* Medium Dark Gray */
+    --color-status-text: var(--gray-300); /* Amber */
+    --color-status-container-bg: var(--gray-950); /* Dim Gray */
+
+    /* 10. Hover Effects */
+    --color-hover-bg: #757575; /* Gray */
+    --color-hover-text: var(--color-text-primary); /* Light Gray */
+        
+    /* 12. antEffect Colors */
+    --color-ant: #EAB126; /* Amber */
+}
+
+/* Reset and Basic Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Set height to 100% for html and body to ensure #container fills the viewport */
+html, body {
+    height: 100%; /* Ensures the container spans the full viewport height */
+}
+
+/* Gradient Animation Keyframes */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Numbers List Styles */
+#numbersList {
+    position: relative;
+    display: flex; 
+    flex-direction: flex;
+    box-sizing: border-box; 
+    justify-content: left;
+    align-items: left; 
+    flex-wrap: wrap;
+    width: 100%; 
+    line-height: 1; 
+    overflow-y: auto;
+    overflow-x: hidden; /* Hide horizontal scrollbar if not needed */
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+    scrollbar-color: white;
+    margin-right: 0.4em;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+    padding: 0.5em;
+
+    /*set max height*/
+    max-height: 5em;
+
+
+    /* background-color: red;  */
+}
+
+
+/* Number Item Styles */
+.number-item {
+    background-color: var(--color-numberList-item-bg); /* Input background */
+    border-radius:  0.4em;
+    padding: 0.4em;
+
+    margin: 0 0.1em 0 0.1em;
+    margin-bottom:0.3em; /* Added gap below */
+
+    font-size: 1vw;
+    cursor: grab;
+    color: var(--color-numberList-text);        /* Text color */
+    width: auto; 
+    /* aspect-ratio: 1 / 1; */
+
+    /*height = width*/
+    height:2em;
+    display: flex;                           /* Enable flex layout for alignment */
+    justify-content: center;                 /* Horizontally center content */
+    align-items: center;
+    
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+
+}
+
+.number-item.highlight {
+    background-color: var(--color-node-hover); /* Highlight color */
+    color: var(--button-text-color);           /* Ensure text is readable */
+
+}
+
+.traversal-number-item {
+    background: var(--color-numberList-item-bg);
+
+    border-radius:  0.5em;
+    padding: 0.4em;
+    margin: 0.05em; /* Minimize margin */
+    font-size: 0.75em;
+    cursor: grab;
+    color: var(--button-text-color);
+    line-height: 1; /* Ensure tight line height */
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+}
+
+.traversal-number-item.highlight {
+    background-color: var(--color-node-hover); /* Highlight color */
+    color: var(--button-text-color);           /* Ensure text is readable */
+} 
+
+
+#numbersList::-webkit-scrollbar {
+    width: 12px; /* Adjust width as needed */
+}
+
+#numbersList::-webkit-scrollbar-track {
+    background: var(--color-primary-bg);
+}
+
+#numbersList::-webkit-scrollbar-thumb {
+    background-color: var(--gray-600);
+    border-radius:  6px;
+    border: 3px solid var(--color-border);
+
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Thumb color on hover */
+}
+
+.number-item:hover {
+    background-color: var(--color-node-hover); /* Use the hover color */
+    color: var(--button-text-color); /* Ensure text is readable */
+}
+
+.number-item.inserted:hover {
+    /* Disable hover effect for inserted items */
+    background-color: #555555; /* Same as the inserted background */
+    color: #A9A9A9;            /* Same as the inserted text color */
+    cursor: default;
+}
+
+/* Styles for Inserted Numbers */
+.number-item.inserted {
+    background-color: #555555; /* Dark Grey Background */
+    color: #A9A9A9;            /* Grey Text */
+    cursor: default;
+    opacity: 0.6;
+}
+
+/* Highlight Animation for Current Number */
+.number-item.current {
+    background-color: #EAB126; /* Highlighted Background Color */
+    color: #000000;            /* Black Text */
+    opacity: 1;                /* Fully opaque */
+}
+
+@keyframes antEffect {
+    0% {
+        box-shadow: 0 0 5px var(--color-ant), 0 0 10px var(--color-ant), 0 0 15px var(--color-ant), 0 0 20px var(--color-ant);
+    }
+    50% {
+        box-shadow: 0 0 10px var(--color-ant), 0 0 15px var(--color-ant), 0 0 20px var(--color-ant), 0 0 25px var(--color-ant);
+    }
+    100% {
+        box-shadow: 0 0 5px var(--color-ant), 0 0 10px var(--color-ant), 0 0 15px var(--color-ant), 0 0 20px var(--color-ant);
+    }
+}
+
+/* List Edit Box */
+#listEditBox {
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-bottom: 0.5em;
+    border-radius: 0.5em;
+    height: 5em;
+    overflow: hidden;
+    font-size: 1.1vw;
+}
+
+/* Style the Textarea */
+.resizable-input {
+
+    position: relative;
+    width: 100%;
+
+}
+
+.resizable-input textarea {
+    font-family: 'Roboto', sans-serif; /* Roboto Font */
+
+    width: 100%; /* Full width */
+    padding: 0.5em;
+    font-size: 0.7em;
+    border: 1px solid var(--color-border); /* Borders and Secondary Elements */
+    border-radius: 0.5em;
+    background-color: var(--gray-300); /* Dropdown and Input Field Backgrounds */
+    color: black; /* Light Gray Text */
+    resize: none; /* Disable default resizing to use custom resizer */
+    overflow: auto; /* Enable scroll if content overflows */
+    box-sizing: border-box; /* Include padding in height */
+    white-space: pre-wrap; /* Allow lines to wrap */
+    word-wrap: break-word; /* Break long words to prevent overflow */
+    height:auto;
+}
+
+/* Resizer Handle */
+.resizable-input .resizer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    cursor: ns-resize; /* Vertical resize cursor */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Ensure resizer is on top */
+}
+
+/* Resizer SVG Icon Styling */
+.resizable-input .resizer svg {
+    fill: black; /* Icon color */
+    opacity: 0.6;
+}
+
+/* Fade-Out Animation for Number Items */
+.number-item.fade-out {
+    opacity: 0;
+    transition: opacity 0.005s ease, transform 0.005s ease;
+}
+
+/* Transform Group Inside SVG */
+#transformGroup {
+    transform-origin: top center; /* Ensure scaling and translation originate from the top center */
+    /* Removed transition for instant scaling and transformation */
+    /* transition: transform 0.3s ease-out; */
+}
+
+/* Buttons Container: Holds the buttons stacked vertically */
+.buttonsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;     /* Align items to the right */
+    gap: 0.6em;
+    padding: 0.4em;
+    box-sizing: border-box;    /* Include padding and border in width calculations */
+    margin-right: 0;             /* Control spacing to the right */
+    /* background:red; */
+    
+}
+
+/* Button Group: Ensure it fills the container */
+.buttonsContainer .button-group {
+    display: flex;
+    /* background:blue; */
+
+}
+
+
+.button-group button {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Changed from flex-start to center */
+    padding: 1em;
+    border-radius:  1em;
+    border: none;
+    
+    font-size: 0.9vw;
+    font-weight: 600;
+    color: var(--button-text);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px var(--button-shadow);
+    width: 8em;
+    height: 2.5vw;
+    line-height: normal; /* Ensure line height doesn't add extra space */
+    margin-left: 1em; /* Minimize margin */
+
+
+    /* height: 2.75em; */
+    background-image: linear-gradient(
+        to bottom,
+        var(--button-highlight),
+        transparent
+    );
+}
+
+/* Larger icons */
+.button-group button svg {
+    width: 1.8vw;
+    height: 1.8vw;
+    flex-shrink: 0;
+    padding-right: 0.5vw;
+}
+
+/* Traversal Buttons (Pre-order, In-order, Post-order) */
+
+#startTraversalsButton { /* Traversal Button */
+    background-color: var(--button-color); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#startTraversalsButton:hover {
+    background-color: var(--color-6); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+
+}
+
+#inorderNextButton { /* Traversal Button */
+    background-color: var(--gray-700); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#inorderNextButton:hover {
+    background-color: var(--gray-800); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#inorderNextButton:active {
+    background-color: var(--gray-950);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--button-shadow);
+}
+
+#postorderNextButton { /* Traversal Button */
+    background-color: var(--gray-700); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#postorderNextButton:hover {
+    background-color: var(--gray-800); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#postorderNextButton:active {
+    background-color: var(--gray-950);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--button-shadow);
+}
+
+#preorderNextButton { /* Traversal Button */
+    background-color: var(--gray-700); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#preorderNextButton:hover {
+    background-color: var(--gray-800); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#preorderNextButton:active {
+    background-color: var(--gray-950);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--button-shadow);
+}
+
+
+/* Randomize Button */
+#randomizeButton {
+    background-color: var(--gray-700);
+}
+
+#randomizeButton:hover {
+    background-color: var(--gray-800);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--button-shadow);
+}
+
+#randomizeButton:active {
+    background-color: var(--gray-950);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--button-shadow);
+}
+
+/* Add Button */
+#addButton {
+    background-color: var(--gray-700); /* Dark Blue-Gray */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+#addButton:hover {
+    background-color: var(--gray-800); /* Slightly Lighter Purple on Hover */
+}
+
+/* Start Button */
+#nextButton {
+    background-color: var(--button-step-default);
+
+}
+
+#nextButton svg {
+    display: inline-block; /* Ensure it's displayed */
+    visibility: visible;   /* Ensure it's visible */
+    opacity: 1;            /* Ensure it's fully opaque */
+}
+
+#nextButton:hover {
+    background-color: var(--color-6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--button-shadow);
+}
+
+#nextButton:hover svg {
+    fill: var(--button-text);
+    color: var(--button-text);
+    opacity: 1;
+}
+
+#nextButton span {
+    display: inline-block; /* Ensure it's displayed */
+    visibility: visible;   /* Ensure it's visible */
+    opacity: 1;            /* Ensure it's fully opaque */
+}
+
+/* Ensure icon visibility during button state changes */
+.button-group button:hover svg,
+.button-group button:active svg {
+    opacity: 1;
+    fill: currentColor;
+}
+
+#nextButton:active {
+    background-color: var(--gray-950);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--button-shadow);
+}
+
+/* Redraw button specific styles */
+#redrawButton {
+    background-color: var(--gray-700);
+}
+
+#redrawButton:hover {
+    background-color:var(--gray-800);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--button-shadow);
+}
+
+#redrawButton:active {
+    background-color: var(--gray-950);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--button-shadow);
+}
+
+
+/* Main Content Area */
+.rightColumn {
+    flex: 1; /* Allow it to grow and fill the remaining space */
+    display: flex;
+    flex-direction: column; /* Stack topPane and mainPane vertically */
+    overflow: hidden; /* Prevent overflow */
+}
+
+
+
+/* Top Pane */
+#topPane {
+    position: relative; /* Make #topPane the reference point for absolute positioning */
+
+    display: flex;
+    justify-content: space-between; /* Distribute space between children */
+    align-items: center; /* Changed from flex-start to center for better alignment */
+    padding: 0.75em; /* Reduced padding to prevent overflow */
+    background-color: var(--color-top-pane-bg);
+    overflow: visible;
+    box-sizing: border-box;
+    z-index: 2; /* Ensure it stays above other elements */
+    filter: drop-shadow(3px 3px 3px rgba(0, 0, 0, 0.7)); /* Updated drop shadow */
+    /* height:100%; */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><line x1="0" y1="0" x2="0" y2="10" stroke="%23212121" stroke-width="1" transform="rotate(45 5 5)"/></svg>');
+    background-size: 0.5%; /* Match the pattern size */
+}
+
+
+
+/* Status Container: Holds comparisonBox and Buttons side by side */
+.statusContainer {
+    position: relative;
+    width: var(--top-status-width); /* Fixed width */
+
+    display: flex;
+
+    border: 1px solid var(--color-status-border);
+    padding: 0em;
+    border-radius:  0.8em;
+    background-color: var(--color-status-container-bg);
+    height: 100%;             /* Fixed height */
+    flex: 1;  
+    overflow: hidden;                      /* Allow status box to take available space */
+
+}
+
+.spacer{
+    height: 100%;
+    width: var(--top-spacer-width);
+}
+
+.rightGroup {
+    position: relative;
+    width: var(--top-right-group-width); /* Remaining width for the right group */
+
+    display: flex;
+    align-items: center; /* Align buttons and number list vertically */
+    justify-content: flex-end; /* Align the right group to the right */
+    gap: 0; /* Space between buttons and number list */
+    background: var(--gray-950);
+    border-radius:  0.8em;
+
+    /*borders on top, right, bottom */
+    border-top: 1px solid var(--color-numbersList-border); 
+    border-left: 1px solid var(--color-numbersList-border);
+    border-bottom: 1px solid var(--color-numbersList-border);
+    border-right: none;
+    height: 100%;             /* Fixed height */
+}
+
+/* Comparison Box */
+#comparisonBox {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    background-color: var(--color-status-message-bg); /* Status Message Background */
+    border: 0px solid var(--color-status-message-border); /* Border Color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-weight: 200;
+    transition: opacity 0.3s ease;
+    font-size: 1.8vw; /* Use a CSS variable for scaling */
+    color: var(--color-status-text);
+    font-weight: 500;
+    margin: 0.7em;
+    width:100%;
+    height:1em;
+}
+
+
+
+
+
+#comparisonBox.show {
+    opacity: 1;
+}
+
+/* Start Button within statusContainer */
+.statusContainer .button-group {
+    margin: 0; /* Remove default margins */
+}
+
+
+
+/* Main Pane */
+#mainPane {
+    flex-grow: 1;
+    flex-shrink: 1;
+    position: relative; 
+    background-color: var(--color-primary-bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    height:80%;
+}
+
+/* Tree Layer */
+#treeLayer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden; /* Changed from visible to hidden */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    margin: 0;
+    justify-content: center;
+    align-items: center; /* Center children horizontally */
+    padding-top: 0; /* Adjusted for better alignment */
+    cursor: grab;
+    flex-grow: 1;
+    transform-origin: center;
+ 
+}
+
+#treeLayer:active {
+    cursor: grabbing;
+}
+
+/* Tree Container */
+#treeContainer {
+    width: 100%;
+    height: 100%;
+    transform-origin: top center; /* Changed from center center */
+    /* Removed transition for instant scaling */
+    /* transition: transform 0.1s ease-out; */
+    overflow: hidden; /* Changed from visible to hidden */
+    position: relative;
+    display: flex;
+    justify-content: center; 
+
+}
+
+/* Tree SVG */
+#treeSVG {
+    width: 100%;
+    height: 100%;
+    pointer-events: all;
+    
+}
+
+/* SVG Edge Styles */
+.svg-edge {
+    stroke: var(--color-line); /* Lines Connecting Nodes */
+    stroke-width: 0.15em;
+    pointer-events: none;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5)); /* Updated drop shadow */
+}
+
+/* SVG Node Styles */
+.svg-node {
+    fill: var(--color-node-bg); 
+    /*fill opacity */
+    stroke: var(--color-line-node); 
+    stroke-width: 0.25em;
+    cursor: pointer;
+    opacity: 1;
+    filter: drop-shadow(3px 3px 3px rgba(0, 0, 0, 0.7)); /* Updated drop shadow */
+}
+
+.svg-node:hover {
+    fill: var(--color-numbersList-bg); /* Hover State - Red*/
+
+}
+
+
+@keyframes snapIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* SVG Text Styles */
+.svg-text {
+    font-size: 1.2vw; /* Use a CSS variable for scaling */
+    fill: var(--color-node-text); 
+    pointer-events: none;
+    font-weight: 500;
+    text-anchor: middle; 
+    transform: translateY(0.35em); /* Adjust as needed */
+    letter-spacing: 0.04em;
+    stroke: none; /* Ensure no stroke is applied */ 
+}
+
+/* Zoom Icon Style */
+#zoomIcon {
+    height: 2em;
+    margin-right: 1em;
+    fill: var(--color-text-primary); /* Match the theme color */
+}
+
+/* Zoom Slider Style */
+#zoomSlider {
+    width: 100%;
+    margin-right: 0.5em;
+
+}
+
+#zoomSliderContainer {
+    position: absolute;
+    box-sizing: border-box; 
+    display: flex; 
+    align-items: center; 
+    cursor: pointer;
+
+    top: 2%; 
+    right: 2%; 
+    padding: 0.4em;
+    z-index: 1000; 
+    background-color: rgba(0, 0, 0, 0.8); 
+    border-radius:  0.4em;
+    color: white; 
+    width: 12%;
+    height: 2em;
+}
+
+/* Slider Track */
+#zoomSlider::-webkit-slider-runnable-track {
+    background: var(--color-border);
+    height: 0.15em;
+}
+
+/* Slider Thumb */
+#zoomSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: var(--color-button-zoom-bg);
+    width: 0.25em;
+    height: 0.25em;
+    border-radius: 50%;
+    margin-top: -0.5em;
+}
+
+/* For Mozilla Firefox */
+#zoomSlider::-moz-range-track {
+    background: var(--color-border);
+    height: 0.15em;
+    border-radius:  0;
+}
+
+#zoomSlider::-moz-range-thumb {
+    background: var(--color-button-zoom-bg);
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+}
+
+/* Prevent Select on Buttons */
+button {
+    user-select: none;
+}
+
+/* Left Group: Contains comparisonBox, Start Button, and Zoom Controls */
+.leftGroup {
+    display: flex;
+    flex-direction: column;
+    width:30%;
+}
+
+/* Body Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--color-primary-bg);
+    color: var(--color-text-primary);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Container Styles */
+#container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Already set to 100% */
+    width: 100%;
+    position: relative;
+    z-index: 300; /* Set a high z-index */
+
+}
+
+/* Content Pane */
+#contentPane {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    transition: margin-left 0.3s ease;
+}
+
+#traversalsContainer,
+#leftPane {
+    position: absolute;
+    visibility: hidden; /* Hide the containers initially */
+    opacity: 0; /* Ensure full opacity */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 5000; /* Ensure it stays above other elements */
+
+    
+    background-color: rgba(23, 23, 23, 0.1);
+    filter: drop-shadow(3px 3px 3px rgba(0, 0, 0, 0.7)); /* Updated drop shadow */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" opacity="0.8"><line x1="0" y1="0" x2="0" y2="10" stroke="%23212121" stroke-width="1" transform="rotate(45 5 5)"/></svg>');
+    background-size: 0.5%; /* Match the pattern size */
+    border-bottom-right-radius: 0.8em;
+    border-bottom-left-radius: 0.8em;
+    border-right: 0.01em solid var(--color-border);
+    border-left: 0.01em solid var(--color-border);
+    border-bottom: 0.01em solid var(--color-border);
+
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(0.5em);
+
+    transition: top 0.5s ease-out; /* Smooth transition */
+}
+
+#traversalsContainer.open {
+
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-height: 100%; 
+    top:0;
+}
+
+#leftPane.open {
+    visibility: visible; /* Show the pane */
+    opacity: 1; /* Fade in */
+    height: auto; /* Full height when open */
+    padding: 0.5em; /* Restore padding when open */
+
+    top:0;
+    gap: 1.5em;
+    padding-top: 2.5em;
+
+}
+
+#leftPane {
+    left: 59%;
+    width: 17%;   
+    gap: 1em;
+    margin: 0;
+    top:0;
+}
+
+#traversalsContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;    
+    flex-wrap: nowrap;        
+    justify-content: flex-start; 
+    align-items: flex-start;     
+    overflow-y: auto;  
+
+    left: 0.5%;
+    width: 45%;
+    padding: 1em;
+    max-height: 0; 
+    padding-top: 2.2%;
+             
+    gap:10px;
+    /* Smooth Transition for Expansion */
+    transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+
+}
+
+.pane-handle,
+.traversal-pane-handle {
+    visibility: visible; 
+    position: absolute; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    top:0;
+    height: auto;
+    line-height: 1;
+    
+    background-color: var(--gray-800);
+    color: white;
+    z-index: 10000; /* Ensure they are above other elements */
+  
+    padding: 0.5em;
+    border-radius: 0.25em;
+    opacity: 1; /* Ensure full opacity */
+    font-size: 0.75vw;
+    color: rgb(193, 193, 193);
+    font-weight: 500;
+    border-radius: 0 0 0.4em 0.4em;
+    box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.3), 2px 2px 5px rgba(0, 0, 0, 0.5);
+    border-top: none;
+    transition: background-color 0.3s ease, max-height 0.5s ease-out, padding 0.5s ease-out, opacity 0.5s ease-out;
+}
+.pane-handle {
+    left: 65%; /* Adjust as needed */
+}
+
+
+.traversal-pane-handle {
+    left: 12%; /* Adjust as needed */
+}
+
+.pane-handle:hover,
+.traversal-pane-handle:hover {
+    background-color: var(--gray-900); /* Slightly lighter on hover */
+}
+
+
+
+.rightColumn {
+    flex: 1; 
+    display: flex;
+    flex-direction: column; 
+    overflow: hidden; 
+    position: relative; 
+}
+
+.traversalBox {
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    gap: 0px; 
+    width: 100%; 
+    margin-bottom: 0px; 
+     justify-content: flex-start; 
+    padding-bottom: 1em;
+}
+
+.traversalList {
+    
+    border-radius: 1em;
+    padding: 0 1em;
+    overflow-y: auto;
+    border: 0px solid var(--color-border);
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start; /* Align items to the top */
+    justify-content: flex-start; 
+
+    display: flex;
+    gap: .1em; /* Space between items */
+    width: 100%; /* Ensure it spans the full width of the container */
+
+
+}
+
+#leftPane p {
+    font-size: 1vw; /* Adjust the size as needed */
+}
+
+.button-style {
+    padding: 1em;
+    margin: 0; /* Minimize margin */
+    font-size: 0.9vw;
+    cursor: pointer;
+    border: none;
+    border-radius:  1em;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 2.5em;
+    background-color: var(--gray-700); /* Deep Purple */
+    width: 9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box; /* Include padding and border in element's total size */
+    line-height: normal; /* Ensure line height doesn't add extra space */
+    color: var(--button-text-color); /* Light Gray Text */
+    font-weight: 600;
+    box-shadow: 0 2px 4px var(--button-shadow);
+
+
+
+}
+
+.button-style:hover {
+    background-color: var(--gray-800); /* Deep Purple */
+    color: var(--button-text-color); /* Light Gray Text */
+}
+
+.button-style:hover:active {
+    background-color: var(--gray-950);
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px var(--button-shadow);
+}
+
+
+.button-style:disabled {
+    background-color: #888; /* Gray background for disabled state */
+    color: #ccc; /* Light gray text for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+    opacity: 0.6; /* Reduce opacity for a disabled look */
+}
+
+.subtree-highlight {
+    fill: rgba(255, 215, 0, 0.3); /* Gold shading with transparency */
+    stroke: rgba(255, 215, 0, 0.5); /* Gold stroke with transparency */
+}
+
+.node-greyed-out {
+    fill: var(--color-node-greyed-out);
+    stroke: var(--color-node-greyed-out);
+    /* color: var(--color-node-text-greyed-out); */
+    /*set font color red*/
+    /* color: red; */
+
+    /* ochange font color */ 
+}
+
+.svg-node.node-focus {
+    fill: var(--color-node-focus) !important;
+    stroke: var(--color-line) !important;
+    color: var(--color-node-text) !important;
+}
+
+/* 
+.permanent-red text {
+    fill: black !important;
+    
+} */
+
+.hidden-edge {
+    /* display: none;  Hide the edge */
+    stroke: #A9A9A9; /* Dark Gray color */
+    opacity: 0.5; /* Reduce opacity for a grayed-out effect */
+
+
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#traversalsContainer button {
+    cursor: pointer; /* Show pointer cursor for buttons */
+}
+
+
+
+
+
+
+/* Transition for node movement */
+.svg-node,
+.svg-text {
+    transition: opacity 1s ease;
+}
+
+
+
+/* Highlights */
+.child-highlight .svg-node-circle {
+    stroke: blue;
+}
+
+.successor-highlight .svg-node-circle {
+    stroke: green;
+}
+
+/* Child node highlight */
+.child-highlight {
+    stroke: blue;
+}
+
+/* CSS for predecessor highlight */
+.predecessor-highlight .svg-node-circle {
+    stroke: orange;
+}
+
+.svg-node.highlighted {
+    fill: var(--color-node-bg-highlighted); /* Highlighted Node Color - Amber */
+    color: var(--color-node-text-highlighted); /* Highlighted Text Color - Black */
+    /*stroke: #FFEB3B; /* Highlighted Stroke Color - Yellow */
+}
+
+/* Highlighted node */
+.highlighted {
+    stroke: white;
+}
+
+/* Target node highlight */
+.target-highlight {
+    stroke: blue;
+}
+
+/* Fade-out effect */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    pointer-events: none; /* Prevent interactions with fading-out nodes */
+}
+
+/* Fade-in effect */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+/* Keyframes for fade-in */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+
+/* Transition for numbersList items */
+.number-item {
+    transition: opacity 1s ease;
+}
+
+/* Fade-out for numbersList items */
+.number-item.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+/* Fullscreen Container */
+#fullscreenContainer {
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+    z-index: 1000;
+}
+
+/* Fullscreen Button */
+#fullscreenButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+/* Fullscreen Button Hover Effect */
+#fullscreenButton:hover {
+    background-color: none;
+    border-radius: 1em;
+}
+
+/* Fullscreen Icon SVG */
+#fullscreenButton svg {
+    width: 2em;
+    height: 2em;
+    color: var(--gray-400);
+    transition: color 0.3s;
+}
+
+/* Ensure the SVG path uses the currentColor */
+#fullscreenButton path {
+    fill: currentColor;
+}

@@ -1,0 +1,176 @@
+<!--
+  =============================================================
+  Author: Julian Manders-Jones
+  Date: October 2024
+  Project: Binary Search Tree Visualiser
+  Repo: https://github.com/iteacher/bstvisualiser
+
+  Description: an interactive tool designed for learners, educators, and developers interested in deepening their understanding of binary search trees. This app offers a dynamic approach to studying BSTs by enabling users to visually interact with and manipulate the tree structure.
+
+  © 2024 Julian Manders-Jones. All rights reserved.
+
+  This file is part of Binary Search Tree Visualiser.
+
+  MIT License
+  You may obtain a copy of the License at [Link to LICENSE file]
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  =============================================================
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+      <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BST Visualizer</title>
+    
+    <!-- Link to Google Fonts for Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <!-- Content Pane -->
+        <div id="contentPane">
+           
+            <!-- Right Column Wrapper -->
+            <div class="rightColumn">
+                <!-- Left Pane -->  
+                 <svg width="0" height="0">
+                    <defs>
+                        <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+                            <line x1="0" y1="0" x2="0" y2="10" stroke="var(--gray-800)" stroke-width="1" />
+                        </pattern>
+                    </defs>
+                </svg>
+                <!-- Top Pane -->
+                <div id="topPane">                  
+                    <!-- Status Container -->
+                    <div class="statusContainer">
+                        <div id="comparisonBox">All inputs are valid and have been added.</div>
+                    </div>
+                    <div class="spacer"></div>
+                    <!-- Right Group -->
+                    <div class="rightGroup">
+                        <div class="buttonsContainer">
+                            <div class="button-group">
+                                <button id="nextButton">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 5v14l11-7z" fill="currentColor"/>
+                                    </svg>
+                                    <span>Start</span>
+                                </button>
+                            </div>
+                            <div class="button-group">
+                                <button id="redrawButton">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                                    </svg>
+                                    Redraw
+                                </button>
+                            </div>
+                            <div class="button-group">
+                                <button id="randomizeButton">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" fill="currentColor"/>
+                                    </svg>
+                                    Random
+                                </button>
+                            </div>
+                        </div>
+                        <div id="numbersList"></div>
+                    </div>
+                </div>
+              
+
+                <!-- Main Pane -->
+                    <div id="mainPane">
+                        <!-- Tree Canvas -->
+                        <div id="treeLayer"> 
+                            <div id="treeContainer">
+                                <svg id="treeSVG" xmlns="http://www.w3.org/2000/svg">
+                                    <g id="edges" class="svg-edge"></g>
+                                    <g id="nodes" class="svg-node"></g>
+                                </svg> 
+                                <!-- Nodes and Edges are managed within SVG groups -->
+                            </div>
+                                
+ 
+                        </div>
+                        <div id="traversalsContainer" class="traversals-container"></div>
+                        <div id="traversalPaneHandle" class="traversal-pane-handle">traversal options</div>
+                        <!-- Handles for Collapsing/Expanding the Panes -->
+                        <div id="paneHandle" class="pane-handle">list options</div>
+                        <!-- Hidden options panes -->
+                        <div id="leftPane" class="left-pane">
+                            <p>Choose data type:</p>
+                            <!-- Data Type Selector -->
+                            <select id="dataTypeSelect" style="background-color: var(--color-input-bg); color: var(--color-text-white); border: 1px solid var(--color-border); border-radius: 0.4em; padding: 0.5em; font-size: 1vw;">
+                                <option value="integer" selected>Integers</option>
+                                <option value="double">Doubles</option>
+                                <option value="letter">Letters</option>
+                                <option value="word">Words</option>
+                                <option value="mixed">Mixed (Integers and Doubles)</option>
+                            </select>
+                            <p>Edit list:</p>
+                            <div id="listEditBox">
+                                <div class="resizable-input">
+                                    <textarea id="numbersInput" placeholder="Enter numbers separated by commas"></textarea>
+                                    <div class="resizer">
+                                        <!-- SVG Icon for Resizer -->
+                                        <svg width="20" height="20" viewBox="0 0 20 20">
+                                            <rect x="0" y="5" width="20" height="2" fill="currentColor"/>
+                                            <rect x="0" y="9" width="20" height="2" fill="currentColor"/>
+                                            <rect x="0" y="13" width="20" height="2" fill="currentColor"/>
+                                        </svg>
+                                    </div>
+                                </div>   
+                            </div> 
+                            <div class="button-group">
+                                <button id="addButton">Add</button>
+                            </div>                           
+                        </div>
+                        <!-- Zoom Controls -->
+                        <div id="zoomSliderContainer">
+                            <!-- Zoom Icon -->
+                            <svg id="zoomIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 004.23-1.57l.27.28v.79l5 5L20.5 19l-5-5zm-6 0A4.5 4.5 0 119.5 5a4.5 4.5 0 010 9z"/>
+                            </svg>
+                            <input type="range" id="zoomSlider" min="0.5" max="2" step="0.01" value="1">
+                        </div>
+                        <!-- Fullscreen Controls -->
+                        <div id="fullscreenContainer">
+                            <button id="fullscreenButton" aria-label="Toggle Fullscreen">
+                                <!-- Fullscreen Icon SVG -->
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+                                    <path fill="currentColor" d="M4 4h6V2H2v8h2V4zm16 0v6h2V2h-8v2h6zM4 20v-6H2v8h8v-2H4zm16-6v6h-6v2h8v-8h-2z"/>
+                                </svg>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <!-- <script src="sources/logo/logo.js" defer></script> -->
+     <script src="./renderer.js"></script>
+      <script src="./bst.js"></script>
+
+
+</body>
+</html>
